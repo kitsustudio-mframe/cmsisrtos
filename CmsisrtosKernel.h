@@ -10,9 +10,7 @@
 /* ****************************************************************************************
  * Include
  */  
-
-//-----------------------------------------------------------------------------------------
-#include "lang/package-info.h"
+#include "mframe.h"
 
 //-----------------------------------------------------------------------------------------
 #include "./CmsisrtosConfig.h"
@@ -28,8 +26,8 @@ namespace cmsisrtos{
 /* ****************************************************************************************
  * Class/Interface/Struct/Enum
  */  
-class cmsisrtos::CmsisrtosKernel :public lang::Object, 
-public lang::Kernel{
+class cmsisrtos::CmsisrtosKernel :public mframe::lang::Object, 
+public mframe::lang::managerment::Kernel{
 
   /* **************************************************************************************
    * Variable <Public>
@@ -94,7 +92,7 @@ public lang::Kernel{
      * @param runnable 主執行緒事件
      * @param stackSize 主執行緒記憶體堆疊大小
      */
-    virtual void kernelStart(lang::Runnable& runnable, uint32_t stackSize) override;
+    virtual void kernelStart(mframe::lang::Runnable& runnable, uint32_t stackSize) override;
 
     /**
      * @brief 核心鎖定，在調用kernelUnlock以前將不會進行context switch
@@ -155,7 +153,7 @@ public lang::Kernel{
      * @return null 建立失敗
      * @return Thread 建立成功
      */
-    virtual lang::Thread* kernelAllocThread(lang::Runnable& task, lang::Data& stackMemory) override;
+    virtual mframe::lang::Thread* kernelAllocThread(mframe::lang::Runnable& task, mframe::lang::Data& stackMemory) override;
     
     /**
      * @brief 建立一個執行緒，限定堆疊大小
@@ -165,7 +163,7 @@ public lang::Kernel{
      * @return null 建立失敗
      * @return Thread 建立成功
      */
-    virtual lang::Thread* kernelAllocThread(lang::Runnable& task, uint32_t stackSize) override;
+    virtual mframe::lang::Thread* kernelAllocThread(mframe::lang::Runnable& task, uint32_t stackSize) override;
       
     /**
      * @brief 取得當前執行緒
@@ -173,21 +171,21 @@ public lang::Kernel{
      * @return null 可能為核心尚未啟動、當前正在中斷事件
      * @return Thread 獲取成功
      */
-    virtual lang::Thread* kernelGetCurrentThread(void) override;
+    virtual mframe::lang::Thread* kernelGetCurrentThread(void) override;
     
     /**
      * @brief 
      *
      * @return
      */
-    virtual lang::OutputStream* kernelGetOutputStream(void) override;
+    virtual mframe::io::OutputStream* kernelGetOutputStream(void) override;
     
     /**
      * @brief 
      *
      * @return
      */
-    virtual lang::InputStream* kernelGetInputStream(void) override;
+    virtual mframe::io::InputStream* kernelGetInputStream(void) override;
     
     /**
      * @brief 取得核心運作頻率

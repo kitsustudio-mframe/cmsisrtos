@@ -23,14 +23,14 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "cmsis_compiler.h"
-#include "rtx_os.h"
+#include "./cmsis_compiler.h"
+#include "./rtx_os.h"
 
 #ifdef    RTE_Compiler_EventRecorder
 #include "EventRecorder.h"
 #include "EventRecorderConf.h"
 #endif
-#include "rtx_evr.h"
+#include "./rtx_evr.h"
 
 
 // System Configuration

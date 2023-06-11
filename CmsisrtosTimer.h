@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2020 ZxyKira
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: MIT
  */
 #ifndef CMSISRTOS_E904F22C_10C4_4F52_B08F_199E7D6ABE68
@@ -9,7 +9,7 @@
 
 /* ****************************************************************************************
  * Include
- */  
+ */
 
 //-----------------------------------------------------------------------------------------
 
@@ -17,17 +17,15 @@
 
 /* ****************************************************************************************
  * Namespace
- */  
-namespace cmsisrtos{
+ */
+namespace cmsisrtos {
   class CmsisrtosTimer;
 }
 
-
 /* ****************************************************************************************
  * Class/Interface/Struct/Enum
- */  
-class cmsisrtos::CmsisrtosTimer{
-
+ */
+class cmsisrtos::CmsisrtosTimer {
   /* **************************************************************************************
    * Variable <Public>
    */
@@ -51,10 +49,10 @@ class cmsisrtos::CmsisrtosTimer{
   /* **************************************************************************************
    * Construct Method
    */
-  public: 
-	CmsisrtosTimer(void) = default;
+ public:
+  CmsisrtosTimer(void) = default;
 
-	virtual ~CmsisrtosTimer(void) = default;
+  virtual ~CmsisrtosTimer(void) = default;
 
   /* **************************************************************************************
    * Operator Method
@@ -95,11 +93,10 @@ class cmsisrtos::CmsisrtosTimer{
   /* **************************************************************************************
    * Private Method
    */
-
 };
 
 /* ****************************************************************************************
  * End of file
- */ 
+ */
 
 #endif /* CMSISRTOS_E904F22C_10C4_4F52_B08F_199E7D6ABE68 */

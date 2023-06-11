@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2020 ZxyKira
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: MIT
  */
 #ifndef CMSISRTOS_1B3FB229_533C_4331_88C3_A1D4D0A698D8
@@ -9,26 +9,22 @@
 
 /* ****************************************************************************************
  * Include
- */  
-
-//-----------------------------------------------------------------------------------------
-#include "lang/package-info.h"
+ */
+#include "mframe.h"
 
 //-----------------------------------------------------------------------------------------
 
 /* ****************************************************************************************
  * Namespace
- */  
-namespace cmsisrtos{
+ */
+namespace cmsisrtos {
   class CmsisrtosThread;
 }
 
-
 /* ****************************************************************************************
  * Class/Interface/Struct/Enum
- */  
-class cmsisrtos::CmsisrtosThread :public lang::Thread{
-
+ */
+class cmsisrtos::CmsisrtosThread : public mframe::lang::Thread {
   /* **************************************************************************************
    * Variable <Public>
    */
@@ -40,11 +36,10 @@ class cmsisrtos::CmsisrtosThread :public lang::Thread{
   /* **************************************************************************************
    * Variable <Private>
    */
-  private:
-    lang::Memory mStack;
-    uint32_t mThreadID;
-    lang::Runnable& mTask;
-    
+ private:
+  mframe::lang::Memory mStack;
+  uint32_t mThreadID;
+  mframe::lang::Runnable& mTask;
 
   /* **************************************************************************************
    * Abstract method <Public>
@@ -57,21 +52,21 @@ class cmsisrtos::CmsisrtosThread :public lang::Thread{
   /* **************************************************************************************
    * Construct Method
    */
-  public:
-    /**
-     *
-     */
-    CmsisrtosThread(lang::Runnable& task, uint32_t stackSize);
-  
-    /**
-     *
-     */
-    CmsisrtosThread(lang::Runnable& task, lang::Data& stackMemory);
-  
-    /**
-     *
-     */
-    virtual ~CmsisrtosThread(void) override;
+ public:
+  /**
+   *
+   */
+  CmsisrtosThread(mframe::lang::Runnable& task, uint32_t stackSize);
+
+  /**
+   *
+   */
+  CmsisrtosThread(mframe::lang::Runnable& task, mframe::lang::Data& stackMemory);
+
+  /**
+   *
+   */
+  virtual ~CmsisrtosThread(void) override;
 
   /* **************************************************************************************
    * Operator Method
@@ -80,63 +75,62 @@ class cmsisrtos::CmsisrtosThread :public lang::Thread{
   /* **************************************************************************************
    * Public Method <Static>
    */
-  
-  /* **************************************************************************************
-   * Public Method <Override> - lang::Thread
-   */
-  public:
-    
-    /**
-     * @brief Get the Thread Name object
-     * 
-     * @return const char* 
-     */
-    virtual const char* getThreadName(void) const override;
-      
-    /**
-     * @brief Get the Priority object
-     * 
-     * @return lang::ThreadPriority 
-     */
-    virtual lang::ThreadPriority getPriority(void) const override;
 
-    /**
-     * @brief Get the State object
-     * 
-     * @return lang::ThreadState 
-     */
-    virtual lang::ThreadState getState(void) const override;
-      
-    /**
-     * @brief Get the Stack Size object
-     * 
-     * @return uint32_t 
-     */
-    virtual int getStackSize(void) const override;
-      
-    /**
-     * @brief 
-     * 
-     * @param priority 
-     * @return true 
-     * @return false 
-     */
-    virtual bool start(const char* name, lang::ThreadPriority priority) override;
-      
-    /**
-     * @brief 
-     * 
-     */
-    virtual void notify(void) override;
-      
-    /**
-     * @brief Set the Priority object
-     * 
-     * @param priority 
-     * @return true 
-     * @return false 
-     */
-    virtual bool setPriority(lang::ThreadPriority priority) override;  
+  /* **************************************************************************************
+   * Public Method <Override> - mframe::lang::Thread
+   */
+ public:
+  /**
+   * @brief Get the Thread Name object
+   *
+   * @return const char*
+   */
+  virtual const char* getThreadName(void) const override;
+
+  /**
+   * @brief Get the Priority object
+   *
+   * @return mframe::lang::ThreadPriority
+   */
+  virtual mframe::lang::ThreadPriority getPriority(void) const override;
+
+  /**
+   * @brief Get the State object
+   *
+   * @return mframe::lang::ThreadState
+   */
+  virtual mframe::lang::ThreadState getState(void) const override;
+
+  /**
+   * @brief Get the Stack Size object
+   *
+   * @return uint32_t
+   */
+  virtual int getStackSize(void) const override;
+
+  /**
+   * @brief
+   *
+   * @param priority
+   * @return true
+   * @return false
+   */
+  virtual bool start(const char* name, mframe::lang::ThreadPriority priority) override;
+
+  /**
+   * @brief
+   *
+   */
+  virtual void notify(void) override;
+
+  /**
+   * @brief Set the Priority object
+   *
+   * @param priority
+   * @return true
+   * @return false
+   */
+  virtual bool setPriority(mframe::lang::ThreadPriority priority) override;
 
   /* **************************************************************************************
    * Public Method
@@ -157,11 +151,11 @@ class cmsisrtos::CmsisrtosThread :public lang::Thread{
   /* **************************************************************************************
    * Private Method <Static>
    */
-  private:
-    /**
-     *
-     */
-    static void entryPoint(void* attachment);
+ private:
+  /**
+   *
+   */
+  static void entryPoint(void* attachment);
   /* **************************************************************************************
    * Private Method <Override>
    */
@@ -169,17 +163,15 @@ class cmsisrtos::CmsisrtosThread :public lang::Thread{
   /* **************************************************************************************
    * Private Method
    */
-  private:
-    /**
-     * 
-     */
-    void entry(void);
-
-
+ private:
+  /**
+   *
+   */
+  void entry(void);
 };
 
 /* ****************************************************************************************
  * End of file
- */ 
+ */
 
 #endif /* CMSISRTOS_1B3FB229_533C_4331_88C3_A1D4D0A698D8 */

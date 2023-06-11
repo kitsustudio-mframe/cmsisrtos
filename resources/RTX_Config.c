@@ -25,7 +25,10 @@
  * -----------------------------------------------------------------------------
  */
  
-#include "bsp_arterytek_at32f415/cmsis_compiler.h"
+#define USING_CMSIS_COMPILER
+#include "arm.h"
+#undef USING_CMSIS_COMPILER
+
 #include "rtx_os.h"
  
 // OS Idle Thread

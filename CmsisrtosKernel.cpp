@@ -1,21 +1,18 @@
 /**
  * Copyright (c) 2020 ZxyKira
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: MIT
  */
 
 /* ****************************************************************************************
  * Include
  */
-
-//-----------------------------------------------------------------------------------------
-#include "rtx/cmsis_os2.h"
-
-//-----------------------------------------------------------------------------------------
 #include "./CmsisrtosKernel.h"
-#include "./CmsisrtosThread.h"
 
+//-----------------------------------------------------------------------------------------
+#include "./CmsisrtosThread.h"
+#include "./rtx/cmsis_os2.h"
 
 /* ****************************************************************************************
  * Macro
@@ -37,20 +34,19 @@ using cmsisrtos::CmsisrtosKernel;
 /* ****************************************************************************************
  * Construct Method
  */
- 
+
 /** ---------------------------------------------------------------------------------------
  *
  */
-CmsisrtosKernel::CmsisrtosKernel(cmsisrtos::CmsisrtosConfig& config) : 
-mConfig(config){
+CmsisrtosKernel::CmsisrtosKernel(cmsisrtos::CmsisrtosConfig& config) : mConfig(config) {
   this->mLockStack = 0;
   return;
 }
-  
+
 /** ---------------------------------------------------------------------------------------
  *
  */
-CmsisrtosKernel::~CmsisrtosKernel(void){
+CmsisrtosKernel::~CmsisrtosKernel(void) {
   return;
 }
 /* ****************************************************************************************
@@ -62,130 +58,128 @@ CmsisrtosKernel::~CmsisrtosKernel(void){
  */
 
 /* ****************************************************************************************
- * Public Method <Override> - lang::Kernel
+ * Public Method <Override> - mframe::lang::Kernel
  */
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-bool CmsisrtosKernel::kernelInitialize(void){
+bool CmsisrtosKernel::kernelInitialize(void) {
   return (osKernelInitialize() == osOK);
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-void CmsisrtosKernel::kernelStart(lang::Runnable& runnable, uint32_t stackSize){
-  lang::Thread* thread = new cmsisrtos::CmsisrtosThread(runnable, stackSize);
-  if(thread->start("svchost") == false)
-    System::error(this, lang::ErrorCode::SYSTEM_ERROR);
-    
+void CmsisrtosKernel::kernelStart(mframe::lang::Runnable& runnable, uint32_t stackSize) {
+  mframe::lang::Thread* thread = new cmsisrtos::CmsisrtosThread(runnable, stackSize);
+  if (thread->start("svchost") == false)
+    System::error(this, mframe::lang::ErrorCode::SYSTEM_ERROR);
+
   osKernelStart();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-int CmsisrtosKernel::kernelLock(void){
-  switch(osKernelGetState()){
+int CmsisrtosKernel::kernelLock(void) {
+  switch (osKernelGetState()) {
     //----------------------------------------
     case osKernelRunning:
       osKernelLock();
       this->mLockStack = 1;
       break;
-    
+
     //----------------------------------------
     case osKernelLocked:
       ++this->mLockStack;
       break;
-    
+
     //----------------------------------------
     case osKernelInactive:
       break;
-    
+
     //----------------------------------------
     case osKernelReady:
       break;
-    
+
     //----------------------------------------
     case osKernelSuspended:
       break;
-    
+
     //----------------------------------------
     case osKernelError:
       break;
-    
+
     //----------------------------------------
     case osKernelReserved:
       break;
-    
   }
-  
+
   return this->mLockStack;
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-int CmsisrtosKernel::kernelUnlock(void){
-  switch(osKernelGetState()){
+int CmsisrtosKernel::kernelUnlock(void) {
+  switch (osKernelGetState()) {
     //----------------------------------------
     case osKernelRunning:
       break;
-    
+
     //----------------------------------------
     case osKernelLocked:
-      if(this->mLockStack == 1)
-      osKernelUnlock();
+      if (this->mLockStack == 1)
+        osKernelUnlock();
       --this->mLockStack;
       break;
-    
+
     //----------------------------------------
     case osKernelInactive:
       break;
-    
+
     //----------------------------------------
     case osKernelReady:
       break;
-    
+
     //----------------------------------------
     case osKernelSuspended:
       break;
-    
+
     //----------------------------------------
     case osKernelError:
       break;
-    
+
     //----------------------------------------
     case osKernelReserved:
       break;
-    
   }
-  
+
   return this->mLockStack;
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-uint32_t CmsisrtosKernel::kernelGetTickCount(void){
+uint32_t CmsisrtosKernel::kernelGetTickCount(void) {
   return osKernelGetTickCount();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-uint32_t CmsisrtosKernel::kernelGetTickFreq(void){
+uint32_t CmsisrtosKernel::kernelGetTickFreq(void) {
   return osKernelGetSysTimerCount();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-bool CmsisrtosKernel::kernelDelay(uint32_t milliseconds) const{
-  if(milliseconds <= 0)
+bool CmsisrtosKernel::kernelDelay(uint32_t milliseconds) const {
+  if (milliseconds <= 0)
     return false;
-  
+
   return (osDelay(static_cast<uint32_t>(milliseconds)) == osOK);
 }
 
@@ -194,83 +188,82 @@ bool CmsisrtosKernel::kernelDelay(uint32_t milliseconds) const{
  */
 bool CmsisrtosKernel::kernelWait(uint32_t timeout) const {
   osThreadFlagsClear(0x00000001U);
-  
-  if(timeout){
-    if(osThreadFlagsWait(0x00000001U, osFlagsWaitAny, timeout) == osFlagsErrorTimeout)
+
+  if (timeout) {
+    if (osThreadFlagsWait(0x00000001U, osFlagsWaitAny, timeout) == osFlagsErrorTimeout)
       return true;
-  }else{
+  } else {
     osThreadFlagsWait(0x00000001U, osFlagsWaitAny, osWaitForever);
     return true;
   }
 
-  
   return false;
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-void CmsisrtosKernel::kernelReboot(void){
+void CmsisrtosKernel::kernelReboot(void) {
   this->mConfig.coreReboot();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-lang::Thread* CmsisrtosKernel::kernelAllocThread(lang::Runnable& task, lang::Data& stackMemory){
+mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable& task, mframe::lang::Data& stackMemory) {
   return new cmsisrtos::CmsisrtosThread(task, stackMemory);
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-lang::Thread* CmsisrtosKernel::kernelAllocThread(lang::Runnable& task, uint32_t stackSize){
+mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable& task, uint32_t stackSize) {
   return new cmsisrtos::CmsisrtosThread(task, stackSize);
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-lang::Thread* CmsisrtosKernel::kernelGetCurrentThread(void){
-  uint32_t *id = Pointers::pointCast(osThreadGetId(), Class<uint32_t>::cast());
-  
-  if(id == nullptr)
+mframe::lang::Thread* CmsisrtosKernel::kernelGetCurrentThread(void) {
+  uint32_t* id = Pointers::pointCast(osThreadGetId(), Class<uint32_t>::cast());
+
+  if (id == nullptr)
     return nullptr;
-  
+
   id = Pointers::pointShift(id, -8);
-  lang::Thread* result = Pointers::pointCast(*id, Class<lang::Thread>::cast());
-  
-  if(result == nullptr)
+  mframe::lang::Thread* result = Pointers::pointCast(*id, Class<mframe::lang::Thread>::cast());
+
+  if (result == nullptr)
     return nullptr;
-  
+
   return result;
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-lang::OutputStream* CmsisrtosKernel::kernelGetOutputStream(void){
+mframe::io::OutputStream* CmsisrtosKernel::kernelGetOutputStream(void) {
   return this->mConfig.coreGetOutputStream();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-lang::InputStream* CmsisrtosKernel::kernelGetInputStream(void){
+mframe::io::InputStream* CmsisrtosKernel::kernelGetInputStream(void) {
   return this->mConfig.coreGetInputStream();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-uint32_t CmsisrtosKernel::kernelGetCoreClock(void){
+uint32_t CmsisrtosKernel::kernelGetCoreClock(void) {
   return this->mConfig.coreGetClock();
 }
 
 /** ---------------------------------------------------------------------------------------
  *
  */
-bool CmsisrtosKernel::kenrelYield(void){
+bool CmsisrtosKernel::kenrelYield(void) {
   return (osThreadYield() == osOK);
 }
 

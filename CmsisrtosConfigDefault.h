@@ -10,9 +10,7 @@
 /* ****************************************************************************************
  * Include
  */  
-
-//-----------------------------------------------------------------------------------------
-#include "lang/package-info.h"
+#include "mframe.h"
 
 //-----------------------------------------------------------------------------------------
 #include "./CmsisrtosConfig.h"
@@ -28,7 +26,7 @@ namespace cmsisrtos{
 /* ****************************************************************************************
  * Class/Interface/Struct/Enum
  */  
-class cmsisrtos::CmsisrtosConfigDefault : public lang::Object, public cmsisrtos::CmsisrtosConfig{
+class cmsisrtos::CmsisrtosConfigDefault : public mframe::lang::Object, public cmsisrtos::CmsisrtosConfig{
 
   /* **************************************************************************************
    * Variable <Public>
@@ -43,8 +41,8 @@ class cmsisrtos::CmsisrtosConfigDefault : public lang::Object, public cmsisrtos:
    */
   private:
     uint32_t mClock;
-    lang::OutputStream* mOutputStream;
-    lang::InputStream* mInputStream;
+    mframe::io::OutputStream* mOutputStream;
+    mframe::io::InputStream* mInputStream;
     void (*mReboot)(void);
   
   /* **************************************************************************************
@@ -91,14 +89,14 @@ class cmsisrtos::CmsisrtosConfigDefault : public lang::Object, public cmsisrtos:
      *
      * @return
      */
-    virtual lang::OutputStream* coreGetOutputStream(void) override;
+    virtual mframe::io::OutputStream* coreGetOutputStream(void) override;
       
     /**
      * @brief 
      *
      * @return
      */
-    virtual lang::InputStream* coreGetInputStream(void) override;
+    virtual mframe::io::InputStream* coreGetInputStream(void) override;
     
     /**
      * @brief 核心重啟
@@ -118,12 +116,12 @@ class cmsisrtos::CmsisrtosConfigDefault : public lang::Object, public cmsisrtos:
     /**
      *
      */
-    void setOutputStream(lang::OutputStream* outputStream);
+    void setOutputStream(mframe::io::OutputStream* outputStream);
   
     /**
      *
      */
-    void setInputStream(lang::InputStream* inputStream);
+    void setInputStream(mframe::io::InputStream* inputStream);
   
     /**
      *
