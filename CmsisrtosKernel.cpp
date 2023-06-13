@@ -11,8 +11,19 @@
 #include "./CmsisrtosKernel.h"
 
 //-----------------------------------------------------------------------------------------
+#define USING_CMSIS_COMPILER
+#include "arm.h"
+#undef USING_CMSIS_COMPILER
+
+#define USING_CMSISRTOS_RTX_OS
+#define USING_LEGACY
+#include "rtos.h"
+#undef USING_LEGACY
+#undef USING_CMSISRTOS_RTX_OS
+
 #include "./CmsisrtosThread.h"
 #include "./rtx/cmsis_os2.h"
+
 
 /* ****************************************************************************************
  * Macro
@@ -27,6 +38,48 @@
 //-----------------------------------------------------------------------------------------
 using cmsisrtos::CmsisrtosKernel;
 
+
+/* ****************************************************************************************
+ * Legacy
+ */
+ 
+extern "C"{
+  __WEAK __NO_RETURN void osRtxIdleThread (void *argument) {
+    (void)argument;
+
+    for (;;) {}
+  }
+   
+  // OS Error Callback function
+  __WEAK uint32_t osRtxErrorNotify (uint32_t code, void *object_id) {
+    (void)object_id;
+
+    switch (code) {
+      case osRtxErrorStackOverflow:
+        // Stack overflow detected for thread (thread_id=object_id)
+        break;
+      case osRtxErrorISRQueueOverflow:
+        // ISR Queue overflow detected when inserting object (object_id)
+        break;
+      case osRtxErrorTimerQueueOverflow:
+        // User Timer Callback Queue overflow detected for timer (timer_id=object_id)
+        break;
+      case osRtxErrorClibSpace:
+        // Standard C/C++ library libspace not available: increase OS_THREAD_LIBSPACE_NUM
+        break;
+      case osRtxErrorClibMutex:
+        // Standard C/C++ library mutex initialization failed.
+      
+      default:
+        // Reserved
+        break;
+    }
+    for (;;) {}
+  //return 0U;
+  }
+}
+
+
 /* ****************************************************************************************
  * Variable <Static>
  */
@@ -38,7 +91,8 @@ using cmsisrtos::CmsisrtosKernel;
 /** ---------------------------------------------------------------------------------------
  *
  */
-CmsisrtosKernel::CmsisrtosKernel(cmsisrtos::CmsisrtosConfig& config) : mConfig(config) {
+CmsisrtosKernel::CmsisrtosKernel(void (*reboot)(void)) {
+  this->mReboot = reboot;
   this->mLockStack = 0;
   return;
 }
@@ -71,11 +125,7 @@ bool CmsisrtosKernel::kernelInitialize(void) {
 /** ---------------------------------------------------------------------------------------
  *
  */
-void CmsisrtosKernel::kernelStart(mframe::lang::Runnable& runnable, uint32_t stackSize) {
-  mframe::lang::Thread* thread = new cmsisrtos::CmsisrtosThread(runnable, stackSize);
-  if (thread->start("svchost") == false)
-    System::error(this, mframe::lang::ErrorCode::SYSTEM_ERROR);
-
+void CmsisrtosKernel::kernelStart(void) {
   osKernelStart();
 }
 
@@ -204,7 +254,7 @@ bool CmsisrtosKernel::kernelWait(uint32_t timeout) const {
  *
  */
 void CmsisrtosKernel::kernelReboot(void) {
-  this->mConfig.coreReboot();
+  this->mReboot();
 }
 
 /** ---------------------------------------------------------------------------------------
@@ -217,7 +267,7 @@ mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable&
 /** ---------------------------------------------------------------------------------------
  *
  */
-mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable& task, uint32_t stackSize) {
+mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable& task, int stackSize) {
   return new cmsisrtos::CmsisrtosThread(task, stackSize);
 }
 
@@ -237,27 +287,6 @@ mframe::lang::Thread* CmsisrtosKernel::kernelGetCurrentThread(void) {
     return nullptr;
 
   return result;
-}
-
-/** ---------------------------------------------------------------------------------------
- *
- */
-mframe::io::OutputStream* CmsisrtosKernel::kernelGetOutputStream(void) {
-  return this->mConfig.coreGetOutputStream();
-}
-
-/** ---------------------------------------------------------------------------------------
- *
- */
-mframe::io::InputStream* CmsisrtosKernel::kernelGetInputStream(void) {
-  return this->mConfig.coreGetInputStream();
-}
-
-/** ---------------------------------------------------------------------------------------
- *
- */
-uint32_t CmsisrtosKernel::kernelGetCoreClock(void) {
-  return this->mConfig.coreGetClock();
 }
 
 /** ---------------------------------------------------------------------------------------

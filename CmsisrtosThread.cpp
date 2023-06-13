@@ -37,7 +37,7 @@ using cmsisrtos::CmsisrtosThread;
 /**
  *
  */
-CmsisrtosThread::CmsisrtosThread(mframe::lang::Runnable& task, uint32_t stackSize) : mStack(stackSize),
+CmsisrtosThread::CmsisrtosThread(mframe::lang::Runnable& task, int stackSize) : mStack(stackSize),
                                                                                      mTask(task) {
   this->mThreadID = 0;
   return;
@@ -262,6 +262,7 @@ void CmsisrtosThread::entryPoint(void* attachment) {
   CmsisrtosThread* thread = static_cast<CmsisrtosThread*>(attachment);
   if (thread != nullptr)
     thread->entry();
+  
   osThreadExit();
 }
 

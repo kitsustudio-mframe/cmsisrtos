@@ -15,11 +15,10 @@
 /* ****************************************************************************************
  * Include
  */
-#include "./CmsisrtosConfig.h"
-#include "./CmsisrtosConfigDefault.h"
+#ifndef USING_LEGACY
 #include "./CmsisrtosKernel.h"
 #include "./CmsisrtosThread.h"
-
+#endif
 /* ****************************************************************************************
  * End of file
  */

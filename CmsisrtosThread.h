@@ -56,7 +56,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::Thread {
   /**
    *
    */
-  CmsisrtosThread(mframe::lang::Runnable& task, uint32_t stackSize);
+  CmsisrtosThread(mframe::lang::Runnable& task, int stackSize);
 
   /**
    *
