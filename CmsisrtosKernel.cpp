@@ -289,6 +289,14 @@ mframe::lang::Thread* CmsisrtosKernel::kernelGetCurrentThread(void) {
   return result;
 }
 
+/* ---------------------------------------------------------------------------------------
+ *
+ */
+mframe::lang::Timer* CmsisrtosKernel::kernelAllocTimer(void){
+  return nullptr;
+}
+
+
 /** ---------------------------------------------------------------------------------------
  *
  */

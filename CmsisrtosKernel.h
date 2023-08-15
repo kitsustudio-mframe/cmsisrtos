@@ -172,6 +172,14 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
   virtual mframe::lang::Thread* kernelGetCurrentThread(void) override;
 
   /**
+   * @brief 建立一個計時器。
+   * 
+   * @return null 建立計時器失敗。
+   * @return mframe::lang::Timer* 建立計時器成功。
+   */
+  virtual mframe::lang::Timer* kernelAllocTimer(void) override;
+
+  /**
    * @brief 該函數將控制權傳遞給處於 READY 狀態且具有相同優先級的下一個線程。
    *        如果在READY狀態下沒有其他優先級相同的線程，則當前線程繼續執行，不會發生線程切換。
    *        不會將線程設置為 BLOCKED 狀態。
