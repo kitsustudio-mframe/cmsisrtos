@@ -5,134 +5,132 @@
  * SPDX-License-Identifier: MIT
  */
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Include
  */
-#include "./CmsisrtosKernel.h"
 
-//-----------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
 #define USING_CMSIS_COMPILER
 #include "arm.h"
-#undef USING_CMSIS_COMPILER
+#include "CmsisrtosKernel.h"
 
-#define USING_CMSISRTOS_RTX_OS
-#define USING_LEGACY
-#include "rtos.h"
-#undef USING_LEGACY
-#undef USING_CMSISRTOS_RTX_OS
+//---------------------------------------------------------------------------------------
+#include "rtos_rtx5/CmsisrtosThread.h"
+#include "rtos_rtx5/rtx/rtx_os.h"
+#include "rtos_rtx5/rtx/cmsis_os2.h"
 
-#include "./CmsisrtosThread.h"
-#include "./rtx/cmsis_os2.h"
-
-
-/* ****************************************************************************************
- * Macro
+/* **************************************************************************************
+ * Namespace
  */
+namespace cmsisrtos {
+#pragma pack(4)
+  static uint8_t cmsisrtosKernelMemory[sizeof(CmsisrtosKernel)];
+#pragma pack()
+}  // namespace cmsisrtos
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Using
  */
-
-//-----------------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------------------
 using cmsisrtos::CmsisrtosKernel;
+using mframe::lang::Pointers;
+using mframe::lang::Class;
 
+//---------------------------------------------------------------------------------------
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Legacy
  */
- 
-extern "C"{
-  __WEAK __NO_RETURN void osRtxIdleThread (void *argument) {
-    (void)argument;
 
-    for (;;) {}
-  }
-   
-  // OS Error Callback function
-  __WEAK uint32_t osRtxErrorNotify (uint32_t code, void *object_id) {
-    (void)object_id;
 
-    switch (code) {
-      case osRtxErrorStackOverflow:
-        // Stack overflow detected for thread (thread_id=object_id)
-        break;
-      case osRtxErrorISRQueueOverflow:
-        // ISR Queue overflow detected when inserting object (object_id)
-        break;
-      case osRtxErrorTimerQueueOverflow:
-        // User Timer Callback Queue overflow detected for timer (timer_id=object_id)
-        break;
-      case osRtxErrorClibSpace:
-        // Standard C/C++ library libspace not available: increase OS_THREAD_LIBSPACE_NUM
-        break;
-      case osRtxErrorClibMutex:
-        // Standard C/C++ library mutex initialization failed.
-      
-      default:
-        // Reserved
-        break;
-    }
-    for (;;) {}
-  //return 0U;
+extern "C" __WEAK __NO_RETURN void osRtxIdleThread(void* argument) {
+  (void)argument;
+
+  for (;;) {
   }
 }
 
+// OS Error Callback function
+extern "C" __WEAK uint32_t osRtxErrorNotify(uint32_t code, void* object_id) {
+  (void)object_id;
 
-/* ****************************************************************************************
+  switch (code) {
+    case osRtxErrorStackOverflow:
+      // Stack overflow detected for thread (thread_id=object_id)
+      break;
+    case osRtxErrorISRQueueOverflow:
+      // ISR Queue overflow detected when inserting object (object_id)
+      break;
+    case osRtxErrorTimerQueueOverflow:
+      // User Timer Callback Queue overflow detected for timer (timer_id=object_id)
+      break;
+    case osRtxErrorClibSpace:
+      // Standard C/C++ library libspace not available: increase OS_THREAD_LIBSPACE_NUM
+      break;
+    case osRtxErrorClibMutex:
+      // Standard C/C++ library mutex initialization failed.
+
+    default:
+      // Reserved
+      break;
+  }
+  for (;;) {
+  }
+  // return 0U;
+}
+
+/* **************************************************************************************
  * Variable <Static>
  */
+CmsisrtosKernel* CmsisrtosKernel::mInstance = nullptr;
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Construct Method
  */
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-CmsisrtosKernel::CmsisrtosKernel(void (*reboot)(void)) {
-  this->mReboot = reboot;
+//---------------------------------------------------------------------------------------
+CmsisrtosKernel::CmsisrtosKernel(void) {
+  this->mReboot = nullptr;
   this->mLockStack = 0;
   return;
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
+//---------------------------------------------------------------------------------------
 CmsisrtosKernel::~CmsisrtosKernel(void) {
   return;
 }
-/* ****************************************************************************************
+
+/* **************************************************************************************
  * Operator Method
  */
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Public Method <Static>
  */
 
-/* ****************************************************************************************
+//---------------------------------------------------------------------------------------
+void CmsisrtosKernel::instantiation(void){
+  if(CmsisrtosKernel::mInstance)
+    return;
+  
+  CmsisrtosKernel::mInstance = new(cmsisrtos::cmsisrtosKernelMemory) CmsisrtosKernel();
+  return;
+}
+/* **************************************************************************************
  * Public Method <Override> - mframe::lang::Kernel
  */
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-bool CmsisrtosKernel::kernelInitialize(void) {
+//---------------------------------------------------------------------------------------
+bool CmsisrtosKernel::initialize(void) {
   return (osKernelInitialize() == osOK);
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-void CmsisrtosKernel::kernelStart(void) {
+//---------------------------------------------------------------------------------------
+void CmsisrtosKernel::start(void) {
   osKernelStart();
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-int CmsisrtosKernel::kernelLock(void) {
+//---------------------------------------------------------------------------------------
+int CmsisrtosKernel::systemLock(void) {
   switch (osKernelGetState()) {
     //----------------------------------------
     case osKernelRunning:
@@ -169,10 +167,8 @@ int CmsisrtosKernel::kernelLock(void) {
   return this->mLockStack;
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-int CmsisrtosKernel::kernelUnlock(void) {
+//---------------------------------------------------------------------------------------
+int CmsisrtosKernel::systemUnlock(void) {
   switch (osKernelGetState()) {
     //----------------------------------------
     case osKernelRunning:
@@ -209,34 +205,26 @@ int CmsisrtosKernel::kernelUnlock(void) {
   return this->mLockStack;
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-uint32_t CmsisrtosKernel::kernelGetTickCount(void) {
+//---------------------------------------------------------------------------------------
+uint32_t CmsisrtosKernel::getTickCount(void) {
   return osKernelGetTickCount();
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-uint32_t CmsisrtosKernel::kernelGetTickFreq(void) {
+//---------------------------------------------------------------------------------------
+uint32_t CmsisrtosKernel::getTickFreq(void) {
   return osKernelGetSysTimerCount();
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-bool CmsisrtosKernel::kernelDelay(uint32_t milliseconds) const {
+//---------------------------------------------------------------------------------------
+bool CmsisrtosKernel::systemDelay(uint32_t milliseconds) const {
   if (milliseconds <= 0)
     return false;
 
   return (osDelay(static_cast<uint32_t>(milliseconds)) == osOK);
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-bool CmsisrtosKernel::kernelWait(uint32_t timeout) const {
+//---------------------------------------------------------------------------------------
+bool CmsisrtosKernel::systemWait(uint32_t timeout) const {
   osThreadFlagsClear(0x00000001U);
 
   if (timeout) {
@@ -250,38 +238,30 @@ bool CmsisrtosKernel::kernelWait(uint32_t timeout) const {
   return false;
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-void CmsisrtosKernel::kernelReboot(void) {
+//---------------------------------------------------------------------------------------
+void CmsisrtosKernel::reboot(void) {
   this->mReboot();
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable& task, mframe::lang::Data& stackMemory) {
+//---------------------------------------------------------------------------------------
+mframe::lang::sys::Thread* CmsisrtosKernel::allocThread(mframe::lang::func::Runnable& task, mframe::lang::Data& stackMemory) {
   return new cmsisrtos::CmsisrtosThread(task, stackMemory);
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-mframe::lang::Thread* CmsisrtosKernel::kernelAllocThread(mframe::lang::Runnable& task, int stackSize) {
+//---------------------------------------------------------------------------------------
+mframe::lang::sys::Thread* CmsisrtosKernel::allocThread(mframe::lang::func::Runnable& task, int stackSize) {
   return new cmsisrtos::CmsisrtosThread(task, stackSize);
 }
 
-/** ---------------------------------------------------------------------------------------
- *
- */
-mframe::lang::Thread* CmsisrtosKernel::kernelGetCurrentThread(void) {
+//---------------------------------------------------------------------------------------
+mframe::lang::sys::Thread* CmsisrtosKernel::getCurrentThread(void) {
   uint32_t* id = Pointers::pointCast(osThreadGetId(), Class<uint32_t>::cast());
 
   if (id == nullptr)
     return nullptr;
 
   id = Pointers::pointShift(id, -8);
-  mframe::lang::Thread* result = Pointers::pointCast(*id, Class<mframe::lang::Thread>::cast());
+  mframe::lang::sys::Thread* result = Pointers::pointCast(*id, Class<mframe::lang::sys::Thread>::cast());
 
   if (result == nullptr)
     return nullptr;
@@ -289,41 +269,28 @@ mframe::lang::Thread* CmsisrtosKernel::kernelGetCurrentThread(void) {
   return result;
 }
 
-/* ---------------------------------------------------------------------------------------
- *
- */
-mframe::lang::Timer* CmsisrtosKernel::kernelAllocTimer(void){
+//---------------------------------------------------------------------------------------
+mframe::lang::sys::Timer* CmsisrtosKernel::allocTimer(void) {
   return nullptr;
 }
 
-
-/** ---------------------------------------------------------------------------------------
- *
- */
-bool CmsisrtosKernel::kenrelYield(void) {
+//---------------------------------------------------------------------------------------
+bool CmsisrtosKernel::systemYield(void) {
   return (osThreadYield() == osOK);
 }
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Public Method
  */
 
-/* ****************************************************************************************
- * Protected Method <Static>
- */
-
-/* ****************************************************************************************
- * Protected Method <Override>
- */
-
-/* ****************************************************************************************
+/* **************************************************************************************
  * Protected Method
  */
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Private Method
  */
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * End of file
  */

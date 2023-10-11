@@ -8,24 +8,33 @@
 /* ****************************************************************************************
  * Include
  */
-#include "./CmsisrtosThread.h"
+ 
+//-----------------------------------------------------------------------------------------
+#include "CmsisrtosThread.h"
 
 //-----------------------------------------------------------------------------------------
-#include "./rtx/cmsis_os2.h"
-#include "./rtx/rtx_os.h"
+
+#include "rtos_rtx5/rtx/rtx_os.h"
+#include "rtos_rtx5/rtx/cmsis_os2.h"
 
 /* ****************************************************************************************
  * Macro
  */
 #define CMSISRTOS_MEMORY_ALIGN 0x00000008
+
 /* ****************************************************************************************
  * Using
  */
-
-//-----------------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------------------
 using cmsisrtos::CmsisrtosThread;
+
+//-----------------------------------------------------------------------------------------
+using mframe::lang::Data;
+using mframe::lang::sys::ErrorCode;
+using mframe::lang::func::Runnable;
+using mframe::lang::sys::ThreadPriority;
+using mframe::lang::System;
+using mframe::lang::Pointers;
+using mframe::lang::Class;
 
 /* ****************************************************************************************
  * Variable <Static>
@@ -34,30 +43,25 @@ using cmsisrtos::CmsisrtosThread;
 /* ****************************************************************************************
  * Construct Method
  */
-/**
- *
- */
-CmsisrtosThread::CmsisrtosThread(mframe::lang::Runnable& task, int stackSize) : mStack(stackSize),
-                                                                                     mTask(task) {
+
+//-----------------------------------------------------------------------------------------
+CmsisrtosThread::CmsisrtosThread(Runnable& task, int stackSize) : mStack(stackSize),
+                                                                  mTask(task) {
   this->mThreadID = 0;
   return;
 }
 
-/**
- *
- */
-CmsisrtosThread::CmsisrtosThread(mframe::lang::Runnable& task, mframe::lang::Data& stackMemory) : mStack(stackMemory),
-                                                                                                  mTask(task) {
+//-----------------------------------------------------------------------------------------
+CmsisrtosThread::CmsisrtosThread(Runnable& task, Data& stackMemory) : mStack(stackMemory),
+                                                                      mTask(task) {
   this->mThreadID = 0;
   return;
 }
 
-/**
- *
- */
+//-----------------------------------------------------------------------------------------
 CmsisrtosThread::~CmsisrtosThread(void) {
   if (this->mThreadID != 0)
-    System::error(this, mframe::lang::ErrorCode::SYSTEM_ERROR);
+    System::error(this, ErrorCode::SYSTEM_ERROR);
 
   return;
 }
@@ -71,14 +75,10 @@ CmsisrtosThread::~CmsisrtosThread(void) {
  */
 
 /* ****************************************************************************************
- * Public Method <Override> - mframe::lang::Thread
+ * Public Method <Override> - mframe::lang::sys::Thread
  */
 
-/**
- * @brief Get the Thread Name object
- *
- * @return const char*
- */
+//-----------------------------------------------------------------------------------------
 const char* CmsisrtosThread::getThreadName(void) const {
   osRtxThread_t* handler = reinterpret_cast<osRtxThread_t*>(this->mThreadID);
   if (handler != nullptr)
@@ -87,61 +87,49 @@ const char* CmsisrtosThread::getThreadName(void) const {
   return nullptr;
 }
 
-/**
- * @brief Get the Priority object
- *
- * @return mframe::lang::ThreadPriority
- */
-mframe::lang::ThreadPriority CmsisrtosThread::getPriority(void) const {
+//-----------------------------------------------------------------------------------------
+ThreadPriority CmsisrtosThread::getPriority(void) const {
   if (this->mThreadID == 0)
-    return mframe::lang::ThreadPriority::ERROR;
+    return ThreadPriority::ERROR;
 
   osThreadId_t id = reinterpret_cast<osThreadId_t>(this->mThreadID);
-  return static_cast<mframe::lang::ThreadPriority>(osThreadGetPriority(id));
+  return static_cast<ThreadPriority>(osThreadGetPriority(id));
 }
 
-/**
- * @brief Get the State object
- *
- * @return mframe::lang::ThreadState
- */
-mframe::lang::ThreadState CmsisrtosThread::getState(void) const {
+//-----------------------------------------------------------------------------------------
+mframe::lang::sys::ThreadState CmsisrtosThread::getState(void) const {
   if (this->mThreadID == 0)
-    return mframe::lang::ThreadState::INACTIVE;
+    return mframe::lang::sys::ThreadState::INACTIVE;
 
   osThreadId_t id = reinterpret_cast<osThreadId_t>(this->mThreadID);
 
   switch (osThreadGetState(id)) {
     case osThreadInactive:
-      return mframe::lang::ThreadState::INACTIVE;
+      return mframe::lang::sys::ThreadState::INACTIVE;
 
     case osThreadReady:
-      return mframe::lang::ThreadState::READY;
+      return mframe::lang::sys::ThreadState::READY;
 
     case osThreadRunning:
-      return mframe::lang::ThreadState::RUNNING;
+      return mframe::lang::sys::ThreadState::RUNNING;
 
     case osThreadBlocked:
-      return mframe::lang::ThreadState::BLOCKED;
+      return mframe::lang::sys::ThreadState::BLOCKED;
 
     case osThreadTerminated:
-      return mframe::lang::ThreadState::TERMINATED;
+      return mframe::lang::sys::ThreadState::TERMINATED;
 
     case osThreadError:
-      return mframe::lang::ThreadState::ERROR;
+      return mframe::lang::sys::ThreadState::ERROR;
 
     case osThreadReserved:
-      return mframe::lang::ThreadState::ERROR;
+      return mframe::lang::sys::ThreadState::ERROR;
   }
 
-  return mframe::lang::ThreadState::ERROR;
+  return mframe::lang::sys::ThreadState::ERROR;
 }
 
-/**
- * @brief Get the Stack Size object
- *
- * @return uint32_t
- */
+//-----------------------------------------------------------------------------------------
 int CmsisrtosThread::getStackSize(void) const {
   osRtxThread_t* handler = reinterpret_cast<osRtxThread_t*>(this->mThreadID);
 
@@ -151,14 +139,8 @@ int CmsisrtosThread::getStackSize(void) const {
   return 0;
 }
 
-/**
- * @brief
- *
- * @param priority
- * @return true
- * @return false
- */
-bool CmsisrtosThread::start(const char* name, mframe::lang::ThreadPriority priority) {
+//-----------------------------------------------------------------------------------------
+bool CmsisrtosThread::start(const char* name, mframe::lang::sys::ThreadPriority priority) {
   osThreadAttr_t attr;
 
   if (this->mStack.length() < 256)
@@ -203,23 +185,14 @@ bool CmsisrtosThread::start(const char* name, mframe::lang::ThreadPriority prior
   return true;
 }
 
-/**
- * @brief
- *
- */
+//-----------------------------------------------------------------------------------------
 void CmsisrtosThread::notify(void) {
   osThreadId_t id = reinterpret_cast<osThreadId_t>(this->mThreadID);
   osThreadFlagsSet(id, 0x00000001U);
 }
 
-/**
- * @brief Set the Priority object
- *
- * @param priority
- * @return true
- * @return false
- */
-bool CmsisrtosThread::setPriority(mframe::lang::ThreadPriority priority) {
+//-----------------------------------------------------------------------------------------
+bool CmsisrtosThread::setPriority(mframe::lang::sys::ThreadPriority priority) {
   osThreadId_t id = reinterpret_cast<osThreadId_t>(this->mThreadID);
   return (osThreadSetPriority(id, static_cast<osPriority_t>(priority)) == osOK);
 }
@@ -228,9 +201,7 @@ bool CmsisrtosThread::setPriority(mframe::lang::ThreadPriority priority) {
  * Public Method
  */
 
-/**
- *
- */
+//-----------------------------------------------------------------------------------------
 void CmsisrtosThread::entry(void) {
   this->mTask.run();
   this->mThreadID = 0;
@@ -253,16 +224,12 @@ void CmsisrtosThread::entry(void) {
  * Private Method
  */
 
-/**
- * @brief
- *
- * @param attachment
- */
+//-----------------------------------------------------------------------------------------
 void CmsisrtosThread::entryPoint(void* attachment) {
   CmsisrtosThread* thread = static_cast<CmsisrtosThread*>(attachment);
   if (thread != nullptr)
     thread->entry();
-  
+
   osThreadExit();
 }
 

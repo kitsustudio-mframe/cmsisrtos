@@ -4,8 +4,13 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#ifndef CMSISRTOS_D215E5A1_B0AB_40DA_86A1_7D036C9356A6
-#define CMSISRTOS_D215E5A1_B0AB_40DA_86A1_7D036C9356A6
+#ifdef using_rtos_rtx5_rtx
+#define using_rtos_rtx5_rtx_os
+#define using_rtos_rtx5_rtx_lib
+#define using_rtos_rtx5_rtx_evr
+#define using_rtos_rtx5_rtx_def
+#define using_rtos_rtx5_cmsis_os2
+#endif
 
 /* ****************************************************************************************
  * Include folder
@@ -14,28 +19,31 @@
 /* ****************************************************************************************
  * Include
  */
-#ifdef USING_CMSISRTOS_RTX_OS
+#ifdef using_rtos_rtx5_rtx_os
+#undef using_rtos_rtx5_rtx_os
 #include "./rtx_os.h"
 #endif
 
-#ifdef USING_CMSISRTOS_RTX_LIB
+#ifdef using_rtos_rtx5_rtx_lib
+#undef using_rtos_rtx5_rtx_lib
 #include "./rtx_lib.h"
 #endif
 
-#ifdef USING_CMSISRTOS_RTX_EVR
+#ifdef using_rtos_rtx5_rtx_evr
+#undef using_rtos_rtx5_rtx_evr
 #include "./rtx_evr.h"
 #endif
 
-#ifdef USING_CMSISRTOS_RTX_DEF
+#ifdef using_rtos_rtx5_rtx_def
+#undef using_rtos_rtx5_rtx_evr
 #include "./rtx_def.h"
 #endif
 
-#ifdef USING_CMSISRTOS_OS2
+#ifdef using_rtos_rtx5_cmsis_os2
+#undef using_rtos_rtx5_cmsis_os2
 #include "./cmsis_os2.h"
 #endif
 
 /* ****************************************************************************************
  * End of file
  */
-
-#endif /* CMSISRTOS_D215E5A1_B0AB_40DA_86A1_7D036C9356A6 */

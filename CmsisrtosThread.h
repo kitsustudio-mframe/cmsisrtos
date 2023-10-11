@@ -7,77 +7,82 @@
 #ifndef CMSISRTOS_1B3FB229_533C_4331_88C3_A1D4D0A698D8
 #define CMSISRTOS_1B3FB229_533C_4331_88C3_A1D4D0A698D8
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Include
  */
+
+//-----------------------------------------------------------------------------------------
 #include "mframe.h"
 
 //-----------------------------------------------------------------------------------------
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Namespace
  */
 namespace cmsisrtos {
   class CmsisrtosThread;
 }
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * Class/Interface/Struct/Enum
  */
-class cmsisrtos::CmsisrtosThread : public mframe::lang::Thread {
-  /* **************************************************************************************
+class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
+  /* ************************************************************************************
    * Variable <Public>
    */
 
-  /* **************************************************************************************
-   * Variable <Protected>
-   */
-
-  /* **************************************************************************************
-   * Variable <Private>
+  /* ************************************************************************************
+   * Variable
    */
  private:
   mframe::lang::Memory mStack;
   uint32_t mThreadID;
-  mframe::lang::Runnable& mTask;
+  mframe::lang::func::Runnable& mTask;
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Abstract method <Public>
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Abstract method <Protected>
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Construct Method
    */
  public:
   /**
-   *
+   * @brief Construct a new Cmsisrtos Thread object
+   * 
+   * @param task 
+   * @param stackSize 
    */
-  CmsisrtosThread(mframe::lang::Runnable& task, int stackSize);
+  CmsisrtosThread(mframe::lang::func::Runnable& task, int stackSize);
 
   /**
-   *
+   * @brief Construct a new Cmsisrtos Thread object
+   * 
+   * @param task 
+   * @param stackMemory 
    */
-  CmsisrtosThread(mframe::lang::Runnable& task, mframe::lang::Data& stackMemory);
+  CmsisrtosThread(mframe::lang::func::Runnable& task, mframe::lang::Data& stackMemory);
 
   /**
-   *
+   * @brief Destroy the Cmsisrtos Thread object
+   * 
    */
   virtual ~CmsisrtosThread(void) override;
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Operator Method
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Public Method <Static>
    */
 
-  /* **************************************************************************************
-   * Public Method <Override> - mframe::lang::Thread
+  /* ************************************************************************************
+   * Public Method <Override> - mframe::lang::sys::Thread
    */
  public:
   /**
@@ -90,16 +95,16 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::Thread {
   /**
    * @brief Get the Priority object
    *
-   * @return mframe::lang::ThreadPriority
+   * @return mframe::lang::sys::ThreadPriority
    */
-  virtual mframe::lang::ThreadPriority getPriority(void) const override;
+  virtual mframe::lang::sys::ThreadPriority getPriority(void) const override;
 
   /**
    * @brief Get the State object
    *
-   * @return mframe::lang::ThreadState
+   * @return mframe::lang::sys::ThreadState
    */
-  virtual mframe::lang::ThreadState getState(void) const override;
+  virtual mframe::lang::sys::ThreadState getState(void) const override;
 
   /**
    * @brief Get the Stack Size object
@@ -115,7 +120,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::Thread {
    * @return true
    * @return false
    */
-  virtual bool start(const char* name, mframe::lang::ThreadPriority priority) override;
+  virtual bool start(const char* name, mframe::lang::sys::ThreadPriority priority) override;
 
   /**
    * @brief
@@ -130,47 +135,51 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::Thread {
    * @return true
    * @return false
    */
-  virtual bool setPriority(mframe::lang::ThreadPriority priority) override;
+  virtual bool setPriority(mframe::lang::sys::ThreadPriority priority) override;
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Public Method
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Protected Method <Static>
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Protected Method <Override>
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Protected Method
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Private Method <Static>
    */
  private:
   /**
-   *
+   * @brief 
+   * 
+   * @param attachment 
    */
   static void entryPoint(void* attachment);
-  /* **************************************************************************************
+  
+  /* ************************************************************************************
    * Private Method <Override>
    */
 
-  /* **************************************************************************************
+  /* ************************************************************************************
    * Private Method
    */
  private:
   /**
-   *
+   * @brief 
+   * 
    */
   void entry(void);
 };
 
-/* ****************************************************************************************
+/* **************************************************************************************
  * End of file
  */
 
