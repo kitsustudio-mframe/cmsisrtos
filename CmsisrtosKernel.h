@@ -10,11 +10,11 @@
 /* **************************************************************************************
  * Include
  */
- 
-//-----------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 #include "mframe.h"
 
-//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 /* **************************************************************************************
  * Namespace
@@ -27,13 +27,7 @@ namespace cmsisrtos {
  * Class/Interface/Struct/Enum
  */
 class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
-                                   public mframe::lang::sys::Kernel {
-  /* ************************************************************************************
-   * Variable <Static>
-   */
- private:
-  static CmsisrtosKernel* mInstance;
-
+                                   public mframe::sys::Kernel {
   /* ************************************************************************************
    * Variable
    */
@@ -41,17 +35,13 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
   void (*mReboot)(void);
   int mLockStack;
   /* ************************************************************************************
-   * Abstract method <Public>
-   */
-
-  /* ************************************************************************************
-   * Abstract method <Protected>
+   * Abstract method
    */
 
   /* ************************************************************************************
    * Construct Method
    */
- private:
+ public:
   /**
    * @brief Construct a new Cmsisrtos Kernel object
    *
@@ -67,25 +57,6 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
   /* ************************************************************************************
    * Operator Method
    */
-
-  /* ************************************************************************************
-   * Public Method <Static>
-   */
- public:
-  /**
-   * @brief 取得實例。
-   *
-   * @return CmsisrtosKernel& 實例。
-   */
-  static inline CmsisrtosKernel& getInstance(void) {
-    return *CmsisrtosKernel::mInstance;
-  }
-
-  /**
-   * @brief 類單例實例化。
-   *
-   */
-  static void instantiation(void);
 
   /* ************************************************************************************
    * Public Method <Override>
@@ -166,7 +137,7 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
    * @return null 建立失敗
    * @return Thread 建立成功
    */
-  virtual mframe::lang::sys::Thread* allocThread(mframe::lang::func::Runnable& task, mframe::lang::Data& stackMemory) override;
+  virtual mframe::sys::Thread* allocThread(mframe::func::Runnable& task, mframe::lang::Data& stackMemory) override;
 
   /**
    * @brief 建立一個執行緒，限定堆疊大小
@@ -176,7 +147,7 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
    * @return null 建立失敗
    * @return Thread 建立成功
    */
-  virtual mframe::lang::sys::Thread* allocThread(mframe::lang::func::Runnable& task, int stackSize) override;
+  virtual mframe::sys::Thread* allocThread(mframe::func::Runnable& task, int stackSize) override;
 
   /**
    * @brief 取得當前執行緒
@@ -184,7 +155,7 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
    * @return null 可能為核心尚未啟動、當前正在中斷事件
    * @return Thread 獲取成功
    */
-  virtual mframe::lang::sys::Thread* getCurrentThread(void) override;
+  virtual mframe::sys::Thread* getCurrentThread(void) override;
 
   /**
    * @brief 建立一個計時器。
@@ -192,7 +163,7 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
    * @return null 建立計時器失敗。
    * @return mframe::lang::Timer* 建立計時器成功。
    */
-  virtual mframe::lang::sys::Timer* allocTimer(void) override;
+  virtual mframe::sys::Timer* allocTimer(void) override;
 
   /**
    * @brief 該函數將控制權傳遞給處於 READY 狀態且具有相同優先級的下一個線程。
@@ -209,27 +180,19 @@ class cmsisrtos::CmsisrtosKernel : public mframe::lang::Object,
    */
 
   /* ************************************************************************************
-   * Protected Method <Static>
-   */
-
-  /* ************************************************************************************
-   * Protected Method <Override>
-   */
-
-  /* ************************************************************************************
    * Protected Method
    */
 
   /* ************************************************************************************
-   * Private Method <Static>
-   */
-
-  /* ************************************************************************************
-   * Private Method <Override>
-   */
-
-  /* ************************************************************************************
    * Private Method
+   */
+
+  /* ************************************************************************************
+   * Static Variable
+   */
+
+  /* ************************************************************************************
+   * Static Method
    */
 };
 

@@ -11,10 +11,10 @@
  * Include
  */
 
-//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 #include "mframe.h"
 
-//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 /* **************************************************************************************
  * Namespace
@@ -26,7 +26,7 @@ namespace cmsisrtos {
 /* **************************************************************************************
  * Class/Interface/Struct/Enum
  */
-class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
+class cmsisrtos::CmsisrtosThread : public mframe::sys::Thread {
   /* ************************************************************************************
    * Variable <Public>
    */
@@ -37,7 +37,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
  private:
   mframe::lang::Memory mStack;
   uint32_t mThreadID;
-  mframe::lang::func::Runnable& mTask;
+  mframe::func::Runnable& mTask;
 
   /* ************************************************************************************
    * Abstract method <Public>
@@ -57,7 +57,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
    * @param task 
    * @param stackSize 
    */
-  CmsisrtosThread(mframe::lang::func::Runnable& task, int stackSize);
+  CmsisrtosThread(mframe::func::Runnable& task, int stackSize);
 
   /**
    * @brief Construct a new Cmsisrtos Thread object
@@ -65,7 +65,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
    * @param task 
    * @param stackMemory 
    */
-  CmsisrtosThread(mframe::lang::func::Runnable& task, mframe::lang::Data& stackMemory);
+  CmsisrtosThread(mframe::func::Runnable& task, mframe::lang::Data& stackMemory);
 
   /**
    * @brief Destroy the Cmsisrtos Thread object
@@ -82,7 +82,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
    */
 
   /* ************************************************************************************
-   * Public Method <Override> - mframe::lang::sys::Thread
+   * Public Method <Override> - mframe::sys::Thread
    */
  public:
   /**
@@ -95,16 +95,16 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
   /**
    * @brief Get the Priority object
    *
-   * @return mframe::lang::sys::ThreadPriority
+   * @return mframe::sys::ThreadPriority
    */
-  virtual mframe::lang::sys::ThreadPriority getPriority(void) const override;
+  virtual mframe::sys::ThreadPriority getPriority(void) const override;
 
   /**
    * @brief Get the State object
    *
-   * @return mframe::lang::sys::ThreadState
+   * @return mframe::sys::ThreadState
    */
-  virtual mframe::lang::sys::ThreadState getState(void) const override;
+  virtual mframe::sys::ThreadState getState(void) const override;
 
   /**
    * @brief Get the Stack Size object
@@ -120,7 +120,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
    * @return true
    * @return false
    */
-  virtual bool start(const char* name, mframe::lang::sys::ThreadPriority priority) override;
+  virtual bool start(const char* name, mframe::sys::ThreadPriority priority) override;
 
   /**
    * @brief
@@ -135,7 +135,7 @@ class cmsisrtos::CmsisrtosThread : public mframe::lang::sys::Thread {
    * @return true
    * @return false
    */
-  virtual bool setPriority(mframe::lang::sys::ThreadPriority priority) override;
+  virtual bool setPriority(mframe::sys::ThreadPriority priority) override;
 
   /* ************************************************************************************
    * Public Method

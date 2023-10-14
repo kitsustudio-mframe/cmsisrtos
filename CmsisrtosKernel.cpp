@@ -20,15 +20,6 @@
 #include "rtos_rtx5/rtx/cmsis_os2.h"
 
 /* **************************************************************************************
- * Namespace
- */
-namespace cmsisrtos {
-#pragma pack(4)
-  static uint8_t cmsisrtosKernelMemory[sizeof(CmsisrtosKernel)];
-#pragma pack()
-}  // namespace cmsisrtos
-
-/* **************************************************************************************
  * Using
  */
 using cmsisrtos::CmsisrtosKernel;
@@ -79,11 +70,6 @@ extern "C" __WEAK uint32_t osRtxErrorNotify(uint32_t code, void* object_id) {
 }
 
 /* **************************************************************************************
- * Variable <Static>
- */
-CmsisrtosKernel* CmsisrtosKernel::mInstance = nullptr;
-
-/* **************************************************************************************
  * Construct Method
  */
 
@@ -103,18 +89,6 @@ CmsisrtosKernel::~CmsisrtosKernel(void) {
  * Operator Method
  */
 
-/* **************************************************************************************
- * Public Method <Static>
- */
-
-//---------------------------------------------------------------------------------------
-void CmsisrtosKernel::instantiation(void){
-  if(CmsisrtosKernel::mInstance)
-    return;
-  
-  CmsisrtosKernel::mInstance = new(cmsisrtos::cmsisrtosKernelMemory) CmsisrtosKernel();
-  return;
-}
 /* **************************************************************************************
  * Public Method <Override> - mframe::lang::Kernel
  */
@@ -244,24 +218,24 @@ void CmsisrtosKernel::reboot(void) {
 }
 
 //---------------------------------------------------------------------------------------
-mframe::lang::sys::Thread* CmsisrtosKernel::allocThread(mframe::lang::func::Runnable& task, mframe::lang::Data& stackMemory) {
+mframe::sys::Thread* CmsisrtosKernel::allocThread(mframe::func::Runnable& task, mframe::lang::Data& stackMemory) {
   return new cmsisrtos::CmsisrtosThread(task, stackMemory);
 }
 
 //---------------------------------------------------------------------------------------
-mframe::lang::sys::Thread* CmsisrtosKernel::allocThread(mframe::lang::func::Runnable& task, int stackSize) {
+mframe::sys::Thread* CmsisrtosKernel::allocThread(mframe::func::Runnable& task, int stackSize) {
   return new cmsisrtos::CmsisrtosThread(task, stackSize);
 }
 
 //---------------------------------------------------------------------------------------
-mframe::lang::sys::Thread* CmsisrtosKernel::getCurrentThread(void) {
+mframe::sys::Thread* CmsisrtosKernel::getCurrentThread(void) {
   uint32_t* id = Pointers::pointCast(osThreadGetId(), Class<uint32_t>::cast());
 
   if (id == nullptr)
     return nullptr;
 
   id = Pointers::pointShift(id, -8);
-  mframe::lang::sys::Thread* result = Pointers::pointCast(*id, Class<mframe::lang::sys::Thread>::cast());
+  mframe::sys::Thread* result = Pointers::pointCast(*id, Class<mframe::sys::Thread>::cast());
 
   if (result == nullptr)
     return nullptr;
@@ -270,7 +244,7 @@ mframe::lang::sys::Thread* CmsisrtosKernel::getCurrentThread(void) {
 }
 
 //---------------------------------------------------------------------------------------
-mframe::lang::sys::Timer* CmsisrtosKernel::allocTimer(void) {
+mframe::sys::Timer* CmsisrtosKernel::allocTimer(void) {
   return nullptr;
 }
 
@@ -289,6 +263,14 @@ bool CmsisrtosKernel::systemYield(void) {
 
 /* **************************************************************************************
  * Private Method
+ */
+
+/* **************************************************************************************
+ * Static Variable
+ */
+
+/* **************************************************************************************
+ * Static Method
  */
 
 /* **************************************************************************************
